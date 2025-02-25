@@ -8,30 +8,33 @@
 # COMPLEX (Very Tricky)
 # Modify the function to display recursive file information as dictionary of dictionaries.
 
-# imports
 import os
 import time
-import stat
 
-def get_files_info(): # function get_files_info()
-    files_info = []  # creates empty list for files
-    for filename in os.listdir('.'): # loops through every file (variable named filename) in the listdir() method
-        if os.path.isfile(filename): #if its a file. COME BACK AND ADD ELIF THAT IF ITS A DIR TO RECURSE THROUGH IT
-            file_stat = os.stat(filename) #stats about each file
-            file_info = { 
-                #all the data about each file
-                'name': filename,
-                'size_bytes': file_stat.st_size,
-                'last_modified': time.ctime(file_stat.st_mtime),
-                'permissions': stat.filemode(file_stat.st_mode),
-                'owner': file_stat.st_uid,
-                'group': file_stat.st_gid
-            }
-            files_info.append(file_info) #add the file info for each file into the files_info list
-    return files_info #return the list
+def get_files_info(path='.'):  # Function that collects file details, defaulting to current directory
+    files_info = []  # List to store file details
+    
+    for root, _, files in os.walk(path):  # Recursively traverse directories and files
+        for filename in files:
+            file_path = os.path.join(root, filename)  # Construct the full file path
+            file_stat = os.stat(file_path)  # Get file details/statistics
+            
+            files_info.append({  # Store file details in a dictionary
+                'name': filename,  # File name
+                'path': file_path,  # Full file path
+                'size_bytes': file_stat.st_size,  # File size in bytes
+                'last_modified': time.ctime(file_stat.st_mtime),  # Last modified time
+                'permissions': oct(file_stat.st_mode)[-3:],  # File permissions in octal format (last 3 digits)
+            })
+    
+    return files_info  # Return the list of file details
 
-def print_ll_view(files_info): # function print in 'll' view
-    for file in files_info: #for each file in the files_info list
-        print(f"{file['permissions']} {file['owner']} {file['group']} {file['size_bytes']} {file['last_modified']} {file['name']}") # what gets printed to screen
+def print_ll_view(files_info):  # Function to print file details in 'll' view format
+    for file in files_info:  # Loop through the list of file dictionaries
+        print(f"{file['permissions']} {file['size_bytes']} {file['last_modified']} {file['path']}")  # Print file details
 
-#functions get called in main.py
+if __name__ == "__main__":  # Run the script only if executed directly
+    path = input("Enter the directory path (press Enter to use current directory): ") or "."  # Prompt user for path, default to current directory
+    files_data = get_files_info(path)  # Get file details for the specified path
+    print("\nLinux CLI 'll' View:")  # Print header
+    print_ll_view(files_data)  # Display file details
