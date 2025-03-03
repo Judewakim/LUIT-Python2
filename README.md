@@ -20,11 +20,11 @@ Clone the repository and navigate into the directory:
 ```
 Run the script:
 ```bash
-python list_files_info.py
+python .\data_extraction.py
 ```
 Or specify a directory:
 ```bash
-python list_files_info.py /path/to/directory
+python .\data_extraction.py /path/to/directory
 ```
 
 ## 📜 Example Output
